@@ -29,7 +29,7 @@ open class BarsView: UIView {
     
     fileprivate(set) var isAnimating: Bool = false
 
-    @IBInspectable var animationTime: TimeInterval = 0.1
+    @IBInspectable open var animationTime: TimeInterval = 0.1
     
     override open var frame: CGRect{
         didSet{
@@ -173,13 +173,13 @@ open class BarsView: UIView {
     }
 }
 
-extension BarsView : CAAnimationDelegate {
+extension BarsView: CAAnimationDelegate {
     public func animationDidStart(_ anim: CAAnimation) {
         
     }
     
     public func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
-        if flag && isAnimating{
+        if flag && isAnimating {
             if let identifier = anim.value(forKey: BarsView.animationIdentifier) as? String{
                 if identifier == BarsView.animationIdentifierLeftBar {
                     self.animateLeftBar()
