@@ -16,44 +16,41 @@ open class BarsView: UIView {
     fileprivate static let animationIdentifierMiddleBar: String = "middleBar"
     fileprivate static let animationIdentifierRightBar: String = "rightBar"
 
-    
-    
-    
     fileprivate var leftBar: CALayer = CALayer()
     fileprivate var middleBar: CALayer = CALayer()
     fileprivate var rightBar: CALayer = CALayer()
-    
+
     fileprivate var leftBarAnimation: CAAnimationGroup!
     fileprivate var rightBarAnimation: CAAnimationGroup!
     fileprivate var middleBarAnimation: CAAnimationGroup!
-    
+
     fileprivate(set) var isAnimating: Bool = false
 
     @IBInspectable open var animationTime: TimeInterval = 0.1
-    
-    override open var frame: CGRect{
-        didSet{
+
+    override open var frame: CGRect {
+        didSet {
             resizeBars()
         }
     }
-    
+
     @IBInspectable open var barColors: UIColor = UIColor.white {
-        didSet{
+        didSet {
             setBarColors(color: barColors)
         }
     }
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         initialize()
-        
+
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         initialize()
     }
-    
+
     private func initialize() {
         isHidden = true
         backgroundColor = UIColor.clear
@@ -63,13 +60,13 @@ open class BarsView: UIView {
         resizeBars()
         setBarColors(color: UIColor.white)
     }
-    
+
     private  func setBarColors(color: UIColor) {
         leftBar.backgroundColor = color.cgColor
         middleBar.backgroundColor = color.cgColor
         rightBar.backgroundColor = color.cgColor
     }
-    
+
     override open func awakeFromNib() {
         super.awakeFromNib()
         layoutIfNeeded()
@@ -80,7 +77,7 @@ open class BarsView: UIView {
         middleBar.frame = CGRect(x: self.frame.size.width * 0.4, y: 0.0, width: self.frame.size.width * 0.2, height: self.frame.size.height)
         rightBar.frame = CGRect(x: self.frame.size.width * 0.7, y: 0.0, width: self.frame.size.width * 0.2, height: self.frame.size.height)
     }
-    
+
     open func startAnimate() {
         isHidden = false
         if !isAnimating {
@@ -89,7 +86,6 @@ open class BarsView: UIView {
         }
         //UIView.animate(withDuration: time, delay: 0.0, options: UIViewAnimationOptions.curveEaseIn, animations: {
 
-        
     }
     fileprivate func animate() {
         DispatchQueue.main.async {
@@ -98,7 +94,7 @@ open class BarsView: UIView {
             self.animateRightBar()
         }
     }
-    
+
     fileprivate func animateLeftBar() {
         let random = CGFloat(arc4random() % UInt32(self.frame.size.height))
         let leftFrame = CGRect(x: self.frame.size.width * 0.1, y: self.frame.size.height - random, width: self.frame.size.width * 0.2, height: random)
@@ -108,7 +104,7 @@ open class BarsView: UIView {
         self.leftBar.frame.origin = leftFrame.origin
         self.leftBar.frame.size = leftFrame.size
     }
-    
+
     fileprivate func animateMiddleBar() {
         let random = CGFloat(arc4random() % UInt32(self.frame.size.height))
         let middleFrame = CGRect(x: self.frame.size.width * 0.4, y: self.frame.size.height - random, width: self.frame.size.width * 0.2, height: random)
@@ -119,9 +115,9 @@ open class BarsView: UIView {
         self.middleBar.add(self.middleBarAnimation, forKey: nil)
         self.middleBar.frame.origin = middleFrame.origin
         self.middleBar.frame.size = middleFrame.size
-        
+
     }
-    
+
     fileprivate func animateRightBar() {
         let random = CGFloat(arc4random() % UInt32(self.frame.size.height))
         let rightFrame = CGRect(x: self.frame.size.width * 0.7, y: self.frame.size.height - random, width: self.frame.size.width * 0.2, height: random)
@@ -133,19 +129,18 @@ open class BarsView: UIView {
         self.rightBar.frame.size = rightFrame.size
 
     }
-    
+
     fileprivate func animation(for layer: CALayer, frame: CGRect) -> CAAnimationGroup {
         let animation = CABasicAnimation(keyPath: "frame.origin")
         animation.fromValue = NSValue(cgPoint: layer.frame.origin)
         animation.toValue = NSValue(cgPoint: frame.origin)
         animation.isRemovedOnCompletion = true
-        
+
         let sizeAnimation = CABasicAnimation(keyPath: "frame.size")
         sizeAnimation.fromValue = NSValue(cgSize: layer.frame.size)
         sizeAnimation.toValue = NSValue(cgSize: frame.size)
         sizeAnimation.isRemovedOnCompletion = true
 
-        
         let group = CAAnimationGroup()
         group.delegate = self
         group.duration = self.animationTime
@@ -161,13 +156,13 @@ open class BarsView: UIView {
         self.isHidden = true
         self.removeAnimations()
     }
-    
+
     fileprivate func removeAnimations() {
         rightBar.removeAllAnimations()
         leftBar.removeAllAnimations()
         middleBar.removeAllAnimations()
     }
-    
+
     deinit {
         self.removeAnimations()
     }
@@ -175,21 +170,21 @@ open class BarsView: UIView {
 
 extension BarsView: CAAnimationDelegate {
     public func animationDidStart(_ anim: CAAnimation) {
-        
+
     }
-    
+
     public func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
         if flag && isAnimating {
-            if let identifier = anim.value(forKey: BarsView.animationIdentifier) as? String{
+            if let identifier = anim.value(forKey: BarsView.animationIdentifier) as? String {
                 if identifier == BarsView.animationIdentifierLeftBar {
                     self.animateLeftBar()
-                }else if identifier == BarsView.animationIdentifierMiddleBar  {
+                } else if identifier == BarsView.animationIdentifierMiddleBar {
                     self.animateMiddleBar()
-                }else if identifier == BarsView.animationIdentifierRightBar {
+                } else if identifier == BarsView.animationIdentifierRightBar {
                     self.animateRightBar()
                 }
             }
-        }else{
+        } else {
             self.stopAnimate()
         }
     }
